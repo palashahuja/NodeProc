@@ -31,7 +31,7 @@ SIZE_T GetMemoryInfo(DWORD processID)
 
 //TODO: To format the bytes into mega bytes
 std::string format_in_mb(int memory_in_bytes) {
-
+ 
 }
 // To ensure correct resolution of symbols, add Psapi.lib to TARGETLIBS
 // and compile with -DPSAPI_VERSION=1

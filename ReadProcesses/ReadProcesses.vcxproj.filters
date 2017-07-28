@@ -30,4 +30,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="build\binding.sln" />
+    <None Include="build\readProcess.vcxproj" />
+    <None Include="build\readProcess.vcxproj.filters" />
+  </ItemGroup>
 </Project>

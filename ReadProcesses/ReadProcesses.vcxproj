@@ -151,6 +151,11 @@
   <ItemGroup>
     <ClCompile Include="ReadProcesses.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="build\binding.sln" />
+    <None Include="build\readProcess.vcxproj" />
+    <None Include="build\readProcess.vcxproj.filters" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
