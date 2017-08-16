@@ -1,4 +1,3 @@
-
 #include "ReadProcesses.h"
 
 
@@ -29,10 +28,31 @@ SIZE_T GetMemoryInfo(DWORD processID)
 }
 
 
-//TODO: To format the bytes into mega bytes
-std::string format_in_mb(int memory_in_bytes) {
- 
+//TODO: To format the bytes into proper bytes
+/**
+Notes
+=====
+- Always take the input in the form of SIZE_T, implicit conversion of 
+SIZE_T to int would make the value negative.
+- lastindex would control what sort of information do we want to display
+from the process.
+if lastindex is 3, then it would return a string that ends in "GB"
+if lastindex is 2, then it would return a string that ends in "MB"
+**/
+std::string format_in_proper_bytes(SIZE_T bytes, int lastindex) {
+	int index = 0;
+	int prev_bytes = 0;
+	while (bytes > 0) {
+		prev_bytes = bytes;
+		bytes >>= 10;
+		index++;
+		if (lastindex + 1 == index) {
+			break;
+		}
+	}
+	return std::to_string(prev_bytes) + std::string(arrayOfByteConversions[--index]);
 }
+
 // To ensure correct resolution of symbols, add Psapi.lib to TARGETLIBS
 // and compile with -DPSAPI_VERSION=1
 
@@ -73,10 +93,10 @@ int main(void)
 
 
 	showProcessInformation();
-	std::cout << ProcessPIDMap.size() << std::endl;
+	std::cout << "Number of processes : " <<  ProcessPIDMap.size() << std::endl;
 	for (const auto & procIter : ProcessPIDMap ) {
 		std::wcout << procIter.first.c_str() << std::endl;
-		std::cout << procIter.second.totalMemory << std::endl;
+		std::cout << format_in_proper_bytes(procIter.second.totalMemory, 2) << std::endl;
 	}
 	return 0;
 }

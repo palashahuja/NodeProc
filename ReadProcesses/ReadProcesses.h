@@ -4,11 +4,17 @@ returns the memory info
 */
 #include <vector>
 #include <iostream>
+#include <string>
 #include <windows.h>
 #include <stdio.h>
 #include <psapi.h>
 #include <map>
 #include <TlHelp32.h>
+
+#ifndef READ_PROCESS_INCLUDE_H
+#define READ_PROCESS_INCLUDE_H
+
+
 
 typedef std::wstring processName; 
 typedef WCHAR processString[MAX_PATH];
@@ -44,3 +50,5 @@ void showProcessInformation();
 typedef std::map<processName, TotalProcInfo > ProcessMapType;
 ProcessMapType ProcessPIDMap;
 typedef ProcessMapType::iterator ProcessMapIterator;
+const char * arrayOfByteConversions[4] = { "B", "KB", "MB", "GB" };
+#endif // !READ_PROCESS_INCLUDE_H
