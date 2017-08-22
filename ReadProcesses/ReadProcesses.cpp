@@ -71,7 +71,7 @@ void showProcessInformation() {
 	}
 }
 
-ProcInfo getProcessNameAndPID(DWORD procId) {
+void getProcessNameAndPID(DWORD procId) {
 	TCHAR processName[MAX_PATH] = TEXT("<unknown>");
 	HANDLE ProcessHandle = GetHandleFromPID(procId);
 	// Get Process Name as well as memory information
@@ -98,9 +98,9 @@ int main(void)
 	//	std::wcout << procIter.first.c_str() << std::endl;
 	//	std::cout << format_in_proper_bytes(procIter.second.totalMemory, 2) << std::endl;
 	//}
-	SIZE_T x = 1;
-	int  a = x;
-	printf("%d\n", a);
+	SIZE_T x = 1024*1024*1024;
+	std::cout << x << std::endl;
+	std::cout << format_in_proper_bytes(x, 2) << std::endl;
 
 	return 0;
 }

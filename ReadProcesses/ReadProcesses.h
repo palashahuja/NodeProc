@@ -14,6 +14,9 @@ returns the memory info
 #ifndef READ_PROCESS_INCLUDE_H
 #define READ_PROCESS_INCLUDE_H
 
+// this is currently a macro but it needs to
+// be a custom value that could be set.
+#define NUMBER_OF_PROCESSES 4096
 
 
 typedef std::wstring processName; 
@@ -51,4 +54,9 @@ typedef std::map<processName, TotalProcInfo > ProcessMapType;
 ProcessMapType ProcessPIDMap;
 typedef ProcessMapType::iterator ProcessMapIterator;
 const char * arrayOfByteConversions[4] = { "B", "KB", "MB", "GB" };
+
+// returns the handle for a given process
+HANDLE GetHandleFromPID(DWORD procId) {
+	return OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, procId);
+}
 #endif // !READ_PROCESS_INCLUDE_H
