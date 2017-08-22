@@ -1,15 +1,13 @@
 #include "ReadProcesses.h"
 
-
+/*
+returns the resident size of the process in windows.
+This should actually return the memory that is allocated in windows.
+*/
 SIZE_T GetMemoryInfo(DWORD processID)
 {
 	HANDLE hProcess;
 	PROCESS_MEMORY_COUNTERS pmc;
-
-	// Print the process identifier.
-
-
-	// Print information about the memory usage of the process.
 
 	hProcess = OpenProcess(PROCESS_QUERY_INFORMATION |
 		PROCESS_VM_READ,
@@ -50,39 +48,43 @@ std::string format_in_proper_bytes(SIZE_T bytes, int lastindex) {
 			break;
 		}
 	}
-	return std::to_string(prev_bytes) + std::string(arrayOfByteConversions[--index]);
+	return std::to_string(prev_bytes) + ' ' + std::string(arrayOfByteConversions[--index]);
 }
 
-// To ensure correct resolution of symbols, add Psapi.lib to TARGETLIBS
-// and compile with -DPSAPI_VERSION=1
 
-
+// Currently lists out all the processes in a global PID Map.
+// TODO: Create a local Process PID Map, in such a way that
+// it would be able to cache it as well.
 void showProcessInformation() {
-	HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-	if (hSnapshot) {
-		PROCESSENTRY32 pe32;
-		pe32.dwSize = sizeof(PROCESSENTRY32);
-		if (Process32First(hSnapshot, &pe32)) {
-			do {
-				DWORD procId = pe32.th32ProcessID;
-				processName procName(pe32.szExeFile);
-				SIZE_T memInfo = GetMemoryInfo(procId);
-				if (memInfo == NULL || procName.empty()) {
-					continue;
-				}
-				ProcInfo pInfo = ProcInfo(procId, memInfo);
-				if(ProcessPIDMap.find(procName) == ProcessPIDMap.end()){
-					ProcessPIDMap.emplace(procName, TotalProcInfo(pInfo));
-				}
-				else
-				{
-					(ProcessPIDMap[procName]).add(pInfo);
-				}
-
-			} while (Process32Next(hSnapshot, &pe32));
-		}
-		CloseHandle(hSnapshot);
+	DWORD listOfProcesses[NUMBER_OF_PROCESSES]; // will store all the pid's
+	DWORD allPIDList;                           // this will accumulate all the pid's and hence be needed
+	if (!EnumProcesses(listOfProcesses, sizeof(listOfProcesses), &allPIDList)) {
+		std::cout << "There is some problem in enumerating all the processes" << std::endl;
+		return;
 	}
+	DWORD numberOfProcesses;
+	numberOfProcesses = allPIDList / sizeof(DWORD);
+	for (DWORD index = 0; index < numberOfProcesses; index++) {
+		if (listOfProcesses[index] != 0) {
+
+		}
+	}
+}
+
+ProcInfo getProcessNameAndPID(DWORD procId) {
+	TCHAR processName[MAX_PATH] = TEXT("<unknown>");
+	HANDLE ProcessHandle = GetHandleFromPID(procId);
+	// Get Process Name as well as memory information
+	if (ProcessHandle != NULL) {
+		HMODULE handleModule;
+		DWORD  bytesNeeded;
+		// EnumProcessModules will list out the information required
+		if (EnumProcessModules(ProcessHandle, &handleModule, sizeof(handleModule), &bytesNeeded)) {
+			GetModuleBaseName(ProcessHandle, handleModule, processName, sizeof(processName) / sizeof(TCHAR));
+
+		}
+	}
+
 }
 
 
@@ -90,13 +92,15 @@ void showProcessInformation() {
 int main(void)
 {
 	// Get the list of process identifiers.
+	//showProcessInformation();
+	//std::cout << "Number of processes : " <<  ProcessPIDMap.size() << std::endl;
+	//for (const auto & procIter : ProcessPIDMap ) {
+	//	std::wcout << procIter.first.c_str() << std::endl;
+	//	std::cout << format_in_proper_bytes(procIter.second.totalMemory, 2) << std::endl;
+	//}
+	SIZE_T x = 1;
+	int  a = x;
+	printf("%d\n", a);
 
-
-	showProcessInformation();
-	std::cout << "Number of processes : " <<  ProcessPIDMap.size() << std::endl;
-	for (const auto & procIter : ProcessPIDMap ) {
-		std::wcout << procIter.first.c_str() << std::endl;
-		std::cout << format_in_proper_bytes(procIter.second.totalMemory, 2) << std::endl;
-	}
 	return 0;
 }
